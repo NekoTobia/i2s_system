@@ -1,0 +1,5 @@
+excel_name: default.xlsx
+csv_name: default.csv
+datasets_name: mscoco
+lang: en
+total: 10
