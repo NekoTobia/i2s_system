@@ -7,8 +7,8 @@ import yaml
 import pandas as pd
 import os 
 
-
-from get_loader import get_loader
+from get_loader_zh_tw import get_loader_zh_tw
+from get_loader_en import get_loader_en
 from model import CNNtoLSTM
 from EarlyStopping import EarlyStopping
 import transform
@@ -29,16 +29,31 @@ class ViTLSTM:
         self.gamma = config['gamma']
         self.scheduler_step_size = config['scheduler_step_size']
         self.opti = config['opti']
-        
+        with open('create_config.yaml', 'r') as file:
+            config = yaml.safe_load(file)
+        self.lang = config['lang']
+    
     def get_datasets(self,file_name):
-        data_transform = transform.transform()
-        train_loader, dataset = get_loader(
-            root_folder="./",
-            annotation_file=file_name,
-            transform=data_transform,
-            num_workers=self.num_workers,
-            batch_size=self.batch_size,
-        )
+
+        if self.lang == 'en':
+            data_transform = transform.transform()
+            train_loader, dataset = get_loader_en(
+                root_folder="./",
+                annotation_file=file_name,
+                transform=data_transform,
+                num_workers=self.num_workers,
+                batch_size=self.batch_size,
+            )
+
+        if self.lang == 'zh_tw':
+            data_transform = transform.transform()
+            train_loader, dataset = get_loader_zh_tw(
+                root_folder="./",
+                annotation_file=file_name,
+                transform=data_transform,
+                num_workers=self.num_workers,
+                batch_size=self.batch_size,
+            )
         return train_loader, dataset
         
     def setting_and_training(self, train_loader, dataset):
